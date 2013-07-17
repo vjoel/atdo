@@ -1,6 +1,8 @@
 require 'thread'
 
 class AtDo
+  VERSION = 0.2
+
   def initialize
     @events = [] ## option to use rbtree
     @mutex = Mutex.new
