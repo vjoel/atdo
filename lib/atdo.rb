@@ -1,7 +1,7 @@
 require 'thread'
 
 class AtDo
-  VERSION = 0.2
+  VERSION = "0.3"
 
   def initialize
     @events = [] ## option to use rbtree
