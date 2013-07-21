@@ -1,12 +1,19 @@
 require 'rake'
 require 'rake/testtask'
 
+PRJ = "atdo"
+
 def version
-  require 'atdo'
-  @version ||= AtDo::VERSION
+  @version ||= begin
+    require 'atdo'
+    warn "AtDo::VERSION not a string" unless AtDo::VERSION.kind_of? String
+    AtDo::VERSION
+  end
 end
 
-prj = "atdo"
+def tag
+  @tag ||= "#{PRJ}-#{version}"
+end
 
 desc "Run tests"
 Rake::TestTask.new :test do |t|
@@ -20,13 +27,11 @@ Rake::TestTask.new :bench do |t|
   t.test_files = FileList["bench/*.rb"]
 end
 
-desc "commit, tag, and push repo; build and push gem"
-task :release do
+desc "Commit, tag, and push repo; build and push gem"
+task :release => "release:is_new_version" do
   require 'tempfile'
   
-  tag = "#{prj}-#{version}"
-
-  sh "gem build #{prj}.gemspec"
+  sh "gem build #{PRJ}.gemspec"
 
   file = Tempfile.new "template"
   begin
@@ -38,9 +43,21 @@ task :release do
     file.unlink
   end
 
-  sh "git tag #{prj}-#{version}"
+  sh "git tag #{tag}"
   sh "git push"
   sh "git push --tags"
   
-  sh "gem push #{prj}-#{version}.gem"
+  sh "gem push #{tag}.gem"
+end
+
+namespace :release do
+  desc "Diff to latest release"
+  task :diff do
+    latest = `git describe --abbrev=0 --tags`
+    sh "git diff #{latest}"
+  end
+
+  task :is_new_version do
+    abort "#{tag} exists; update version!" unless `git tag -l #{tag}`.empty?
+  end
 end
