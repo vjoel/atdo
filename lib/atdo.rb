@@ -39,7 +39,11 @@ class AtDo
               break nil if !t
               t_now = Time.now
               break t-t_now if t > t_now
-              a.call
+              begin
+                a.call
+              rescue => ex
+                ## ?
+              end
               @events.shift
             end
           @cvar.wait *duration
