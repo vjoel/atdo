@@ -46,4 +46,40 @@ class TestAtDo < Minitest::Test
     pr.call
     sleep 0.1 until done
   end
+
+  def test_wait_indefinitely
+    done = false
+    @s.at Time.now + 0.1 do
+      done = true
+    end
+
+    sleep 0.1 until done
+
+    events = @s.instance_variable_get(:@events)
+    assert_empty events
+    assert_equal "sleep", @s.thread.status
+
+    done = false
+    @s.at Time.now + 0.1 do
+      done = true
+    end
+
+    sleep 0.1 until done
+
+    assert_empty events
+    assert_equal "sleep", @s.thread.status
+  end
+
+  def test_wait_negative
+    done = false
+    @s.at Time.now - 1 do
+      done = true
+    end
+
+    sleep 0.1 until done
+
+    events = @s.instance_variable_get(:@events)
+    assert_empty events
+    assert_equal "sleep", @s.thread.status
+  end
 end
