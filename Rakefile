@@ -53,7 +53,7 @@ end
 namespace :release do
   desc "Diff to latest release"
   task :diff do
-    latest = `git describe --abbrev=0 --tags`
+    latest = `git describe --abbrev=0 --tags --match '#{PRJ}-*'`
     sh "git diff #{latest}"
   end
 
