@@ -5,8 +5,8 @@ class AtDo
 
   def initialize
     @events = [] ## option to use rbtree
-    @mutex = Mutex.new
-    @cvar = ConditionVariable.new
+    @mon = Monitor.new
+    @cvar = @mon.new_cond
     @thread = nil
   end
   
@@ -16,7 +16,7 @@ class AtDo
   
   def at time, &action
     thread
-    @mutex.synchronize do
+    @mon.synchronize do
       @events << [time, action]
       t, a = @events.sort_by! {|t, a| t}.first
       @cvar.signal if t == time
@@ -25,18 +25,18 @@ class AtDo
   
   def thread
     @thread ||= Thread.new do
-      @mutex.synchronize do
+      @mon.synchronize do
         loop do
-          t_now = Time.now
           duration =
             loop do
               t, a = @events.first
               break nil if !t
+              t_now = Time.now
               break t-t_now if t > t_now
               a.call
               @events.shift
             end
-          @cvar.wait @mutex, *duration
+          @cvar.wait *duration
         end
       end
     end
