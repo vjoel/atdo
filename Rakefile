@@ -37,7 +37,7 @@ task :release => "release:is_new_version" do
   begin
     file.puts "release #{version}"
     file.close
-    sh "git commit -a -v -t #{file.path}"
+    sh "git commit --allow-empty -a -v -t #{file.path}"
   ensure
     file.close unless file.closed?
     file.unlink
