@@ -11,6 +11,12 @@ class AtDo
   end
   
   def stop
+    @mon.synchronize do
+      @thread.kill if @thread
+    end
+  end
+
+  def stop!
     @thread.kill if @thread
   end
   
