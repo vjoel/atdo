@@ -3,8 +3,11 @@ require 'thread'
 class AtDo
   VERSION = "0.3"
 
-  def initialize
-    @events = [] ## option to use rbtree
+  # Storage classes known to work: Array (default), MultiRBTree.
+  def initialize storage: Array
+    @storage_class = storage
+    @events = storage.new
+    @sorted = !defined?(@events.reverse)
     @mon = Monitor.new
     @cvar = @mon.new_cond
     @thread = nil
@@ -23,8 +26,13 @@ class AtDo
   def at time, &action
     thread
     @mon.synchronize do
-      @events << [time, action]
-      t, a = @events.sort_by! {|t, a| t}.first
+      if @sorted
+        @events[time] = action
+        t, _ = @events.first
+      else
+        @events << [time, action]
+        t, _ = @events.sort_by! {|t, a| t}.first
+      end
       @cvar.signal if t == time
     end
   end
@@ -42,7 +50,7 @@ class AtDo
               begin
                 a.call
               rescue => ex
-                ## ?
+                # exception handling is left to client code
               end
               @events.shift
             end

@@ -1,9 +1,9 @@
 require 'minitest/autorun'
 require 'atdo'
 
-class TestAtDo < Minitest::Test
+module AtDoTests
   def setup
-    @s = AtDo.new
+    @s = make_atdo
   end
   
   def teardown
@@ -75,5 +75,29 @@ class TestAtDo < Minitest::Test
     events = @s.instance_variable_get(:@events)
     assert_empty events
     assert_equal "sleep", @s.thread.status
+  end
+end
+
+class TestAtDo < Minitest::Test
+  include AtDoTests
+
+  def make_atdo
+    AtDo.new
+  end
+end
+
+begin
+  require 'rbtree'
+
+rescue LoadError => ex
+  $stderr.puts "skipping tests for AtDo with RBTree: #{ex}"
+
+else
+  class TestAtDoRBTree < Minitest::Test
+    include AtDoTests
+
+    def make_atdo
+      AtDo.new storage: MultiRBTree
+    end
   end
 end
