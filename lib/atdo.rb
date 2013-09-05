@@ -35,6 +35,7 @@ class AtDo
       end
       @cvar.signal if t == time
     end
+    self
   end
   
   def thread
