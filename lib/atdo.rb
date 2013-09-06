@@ -46,6 +46,7 @@ class AtDo
   
   def thread
     @thread ||= Thread.new do
+      Thread.current.abort_on_exception = true
       @mon.synchronize do
         loop do
           duration =
