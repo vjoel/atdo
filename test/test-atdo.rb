@@ -45,7 +45,7 @@ module AtDoTests
     q.pop
   end
 
-  def test_wait_indefinitely
+  def test_at_with_no_events
     q = Queue.new
     @s.at Time.now + 0.1 do
       q << true
@@ -65,7 +65,7 @@ module AtDoTests
     assert_equal "sleep", @s.thread.status
   end
 
-  def test_wait_negative
+  def test_at_negative
     q = Queue.new
     @s.at Time.now - 1 do
       q << true
