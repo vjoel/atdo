@@ -23,6 +23,10 @@ class AtDo
     @thread.kill if @thread
   end
   
+  def wait
+    @thread.join
+  end
+  
   def at time, &action
     thread
     @mon.synchronize do
