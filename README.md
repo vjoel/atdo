@@ -5,6 +5,7 @@ At time, do code. That is all.
 
 Oh, ok, if you insist, here's a little example:
 
+```ruby
     require 'atdo'
     
     scheduler = AtDo.new
@@ -15,9 +16,11 @@ Oh, ok, if you insist, here's a little example:
       puts "world"
     end
     sleep 3
+```
 
 And with rbtree storage instead of array:
 
+```ruby
     require 'atdo'
     require 'rbtree'
     
@@ -29,6 +32,7 @@ And with rbtree storage instead of array:
       puts "world"
     end
     sleep 3
+```
 
 Both of these output
 
