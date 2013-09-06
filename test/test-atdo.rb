@@ -76,6 +76,15 @@ module AtDoTests
     assert_empty events
     assert_equal "sleep", @s.thread.status
   end
+
+  def test_incomparable
+    assert_raises ArgumentError do
+      @s.at(1) {}
+    end
+    assert_raises ArgumentError do
+      @s.at("foo") {}
+    end
+  end
 end
 
 class TestAtDo < Minitest::Test

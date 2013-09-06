@@ -11,6 +11,7 @@ class AtDo
     @mon = Monitor.new
     @cvar = @mon.new_cond
     @thread = nil
+    @t0 = Time.now
   end
   
   def stop
@@ -29,6 +30,7 @@ class AtDo
   
   def at time, &action
     thread
+    time < @t0
     @mon.synchronize do
       if @sorted
         @events[time] = action
