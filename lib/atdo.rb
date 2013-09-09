@@ -14,6 +14,10 @@ class AtDo
     @t0 = Time.now
   end
   
+  def inspect
+    "#<#{self.class}:0x#{self.object_id.to_s(16)} #{@events}>"
+  end
+
   def stop
     @mon.synchronize do
       @thread.kill if @thread
