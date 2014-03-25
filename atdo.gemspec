@@ -23,4 +23,6 @@ Gem::Specification.new do |s|
     "--title", "atdo", "--main", "README.md"]
   s.require_paths = ["lib"]
   s.summary = "Schedule code to be executed at specified time."
+
+  s.required_ruby_version = Gem::Requirement.new("~> 2.0")
 end
