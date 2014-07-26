@@ -1,7 +1,7 @@
 require 'thread'
 
 class AtDo
-  VERSION = "0.5"
+  VERSION = "0.6"
 
   # Storage classes known to work: Array (default), MultiRBTree.
   def initialize storage: Array
