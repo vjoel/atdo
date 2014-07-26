@@ -5,7 +5,7 @@ module AtDoTests
   def setup
     @s = make_atdo
   end
-  
+
   def teardown
     @s.stop
   end

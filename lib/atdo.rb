@@ -11,9 +11,8 @@ class AtDo
     @mon = Monitor.new
     @cvar = @mon.new_cond
     @thread = nil
-    @t0 = Time.now
   end
-  
+
   def inspect
     "#<#{self.class}:0x#{self.object_id.to_s(16)} #{@events}>"
   end
@@ -27,27 +26,28 @@ class AtDo
   def stop!
     @thread.kill if @thread
   end
-  
+
   def wait
     @thread.join
   end
-  
+
   def at time, &action
     thread
-    time < @t0
+    raise ArgumentError unless time.kind_of? Time
+
     @mon.synchronize do
       if @sorted
         @events[time] = action
-        t, _ = @events.first
+        first_event_time, _ = @events.first
       else
         @events << [time, action]
-        t, _ = @events.sort_by! {|t, a| t}.first
+        first_event_time, _ = @events.sort_by! {|t, a| t}.first
       end
-      @cvar.signal if t == time
+      @cvar.signal if first_event_time == time
     end
     self
   end
-  
+
   def thread
     @thread ||= Thread.new do
       Thread.current.abort_on_exception = true
@@ -61,12 +61,12 @@ class AtDo
               break t-t_now if t > t_now
               begin
                 a.call
-              rescue => ex
+              rescue
                 # exception handling is left to client code
               end
               @events.shift
             end
-          @cvar.wait *duration
+          @cvar.wait(*duration)
         end
       end
     end
